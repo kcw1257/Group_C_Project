@@ -1,6 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import time
 
+#oawdokawd
+
 class Ui_MainWindow(object):
     def initUi(self, MainWindow):
         MainWindow.resize(1600, 900)
