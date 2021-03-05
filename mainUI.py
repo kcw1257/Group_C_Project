@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import time
 
 #oawdokawd
+#ajkwdnkjawndkjnad
 
 class Ui_MainWindow(object):
     def initUi(self, MainWindow):
