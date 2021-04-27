@@ -809,7 +809,7 @@ solve = {
     "totalFrames": 69
 }
 
-for i in range(69):
+for i in range(10000):
     frameData = {
         "frame": i,
         "speed": i,

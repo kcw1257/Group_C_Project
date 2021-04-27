@@ -32,6 +32,7 @@ class TiltWidget(QWidget):
 
         self.labelTilt.setText(str(self.tiltVal))
 
-    def update(self):
-        self.labelTilt.setText(str(self.tiltVal))
+    def setTilt(self, tilt):
+        self.tiltVal = tilt
+        self.update()
 

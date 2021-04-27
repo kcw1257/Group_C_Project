@@ -6,7 +6,7 @@ import time
 import pymongo
 import pprint
 from numpy import array, int32
-import joystickWidget, renderBoard2D, renderMarble2D, directionWidget, tiltWidget, timerWidget, labelWidget
+import joystickWidget, renderBoard2D, renderMarble2D, directionWidget, tiltWidget, timerWidget, labelWidget, replayWidget
 from bson.objectid import ObjectId
 
 client = pymongo.MongoClient(host="localhost", port=27017)
@@ -58,14 +58,14 @@ class Ui_MainWindow(object):
         font.setPointSize(32)
         self.buttonAuto.setFont(font)
         self.buttonAuto.setText("Automated Solve")
-        self.buttonAuto.clicked.connect(lambda: self.switchPage(1))
+        self.buttonAuto.clicked.connect(self.loadAuto)
 
         self.buttonManual = QtWidgets.QPushButton(self.pageHome)
         self.buttonManual.setGeometry(QtCore.QRect(500, 300, 650, 140))
         font.setPointSize(32)
         self.buttonManual.setFont(font)
         self.buttonManual.setText("Manual Solve")
-        self.buttonManual.clicked.connect(lambda: self.switchPage(2))
+        self.buttonManual.clicked.connect(self.loadManual)
 
         self.buttonDatabase = QtWidgets.QPushButton(self.pageHome)
         self.buttonDatabase.setGeometry(QtCore.QRect(500, 450, 650, 140))
@@ -97,7 +97,7 @@ class Ui_MainWindow(object):
         font.setPointSize(12)
         self.buttonBackAuto.setFont(font)
         self.buttonBackAuto.setText("Back")
-        self.buttonBackAuto.clicked.connect(lambda: self.switchPage(0))
+        self.buttonBackAuto.clicked.connect(lambda: self.deleteBoardMarble("auto"))
 
         self.labelTitleAuto = QtWidgets.QLabel(self.pageAuto)
         self.labelTitleAuto.setGeometry(QtCore.QRect(140, 0, 1320, 60))
@@ -258,13 +258,18 @@ class Ui_MainWindow(object):
         self.buttonHelpAuto.setGeometry(QtCore.QRect(1500, 10, 75, 23))
         self.buttonHelpAuto.setText("Help")
         self.buttonHelpAuto.clicked.connect(lambda: self.switchPage(5))
+
+        self.buttonRefreshAuto = QtWidgets.QPushButton(self.pageAuto)
+        self.buttonRefreshAuto.setGeometry(QtCore.QRect(950, 815, 100, 40))
+        self.buttonRefreshAuto.setText("Refresh")
+        self.buttonRefreshAuto.clicked.connect(self.refreshBoard)
         
         ###################################################################################################################
         
         #directional widgets
 
-        self.directionSpeedAuto = directionWidget.DirectionWidget(self.frameSpeedAuto, labelVal=self.labelSpeedValAuto)
-        self.directionAccel = directionWidget.DirectionWidget(self.frameAccelAuto, labelVal=self.labelAccelValAuto)
+        self.directionSpeedAuto = directionWidget.DirectionWidget(self.frameSpeedAuto, labelVal=self.labelSpeedValAuto, type="speed")
+        self.directionAccelAuto = directionWidget.DirectionWidget(self.frameAccelAuto, labelVal=self.labelAccelValAuto, type="accel")
         self.xTiltAuto = tiltWidget.TiltWidget(self.frameXTiltAuto, labelTilt=self.labelXTiltValAuto)
         self.yTiltAuto = tiltWidget.TiltWidget(self.frameYTiltAuto, labelTilt=self.labelYTiltValAuto)
 
@@ -280,7 +285,7 @@ class Ui_MainWindow(object):
         
         #render board and marble
 
-        self.renderAuto = renderBoard2D.RenderBoard2D(self.frameVideoAuto,holes=self.imageProcessing()[0],walls=self.imageProcessing()[1],path=self.imageProcessing()[2], difficulty="Easy")
+
 
         ######################################################################################################################
 
@@ -439,7 +444,7 @@ class Ui_MainWindow(object):
         font.setPointSize(12)
         self.buttonBackManual.setFont(font)
         self.buttonBackManual.setText("Back")
-        self.buttonBackManual.clicked.connect(lambda: self.switchPage(0))
+        self.buttonBackManual.clicked.connect(lambda: self.deleteBoardMarble("manual"))
 
         self.frameManual = QtWidgets.QFrame(self.pageManual)
         self.frameManual.setGeometry(QtCore.QRect(940, 770, 241, 121))
@@ -481,6 +486,11 @@ class Ui_MainWindow(object):
         self.buttonClearManual = QtWidgets.QPushButton(self.pageManual)
         self.buttonClearManual.setGeometry(QtCore.QRect(805, 850, 100, 41))
         self.buttonClearManual.setText("Clear Timer")
+
+        self.buttonRefreshAuto = QtWidgets.QPushButton(self.pageManual)
+        self.buttonRefreshAuto.setGeometry(QtCore.QRect(550, 815, 100, 40))
+        self.buttonRefreshAuto.setText("Refresh")
+        self.buttonRefreshAuto.clicked.connect(self.refreshBoard)
 
         ########################################################################################################################
         
@@ -536,29 +546,10 @@ class Ui_MainWindow(object):
         self.xTiltManual = tiltWidget.TiltWidget(self.frameXTiltManual, labelTilt=self.labelXTiltValManual)
         self.yTiltManual = tiltWidget.TiltWidget(self.frameYTiltManual, labelTilt=self.labelYTiltValManual)
 
-        self.xTiltManual.tiltVal = 50
-        self.xTiltManual.tiltVal = 24
-        self.directionSpeedManual.directionVal = 90
-        self.directionAccelManual.directionVal = 256
-        self.directionAccelManual.directionVal = 175
-        self.directionSpeedManual.val = 200
-        self.directionSpeedManual.val = 5
-        self.directionAccelManual.val = 40
 
         #########################################################################################################################
 
         #board and marble render
-
-        holesArray = self.imageProcessing()[0]
-        wallsArray = self.imageProcessing()[1]
-        pathArray = self.imageProcessing()[2]
-
-        board = renderBoard2D.RenderBoard2D(self.frameVideoManual, holes=holesArray, walls=wallsArray, path=pathArray, difficulty="Easy")
-        Marble = renderMarble2D.RenderMarble(self.frameVideoManual, xPos = 135, yPos = 448, mazeWidth=board.width, mazeHeight=board.height,
-                                             mazeX=board.minX, mazeY=board.minY, labelCoodVal=self.labelBallCoodValManual, speedDirection=self.directionSpeedManual.directionVal,
-                                             accelDirection=self.directionAccelManual.directionVal, speedVal=self.directionSpeedManual.val, accelVal=self.directionAccelManual.val)
-        Marble.xTilt = 20
-
 
 
         ##########################################################################################################################
@@ -968,55 +959,36 @@ class Ui_MainWindow(object):
         self.labelTitleReplay.setAlignment(QtCore.Qt.AlignCenter)
         self.labelTitleReplay.setText("Replay")
 
-        self.buttonPlay = QtWidgets.QPushButton(self.pageReplay)
-        self.buttonPlay.setGeometry(QtCore.QRect(1000, 810, 75, 23))
-        self.buttonPlay.setText("Play")
-
-        self.horizontalSliderReplay = QtWidgets.QSlider(self.pageReplay)
-        self.horizontalSliderReplay.setGeometry(QtCore.QRect(930, 840, 471, 22))
-        self.horizontalSliderReplay.setOrientation(QtCore.Qt.Horizontal)
-
-        self.labelProgress = QtWidgets.QLabel(self.pageReplay)
-        self.labelProgress.setGeometry(QtCore.QRect(1110, 810, 151, 21))
-        font.setPointSize(12)
-        self.labelProgress.setFont(font)
-        self.labelProgress.setAlignment(QtCore.Qt.AlignCenter)
-        self.labelProgress.setText("Progress Bar")
-
         self.buttonBackReplay = QtWidgets.QPushButton(self.pageReplay)
         self.buttonBackReplay.setGeometry(QtCore.QRect(20, 830, 81, 31))
         font.setPointSize(12)
         self.buttonBackReplay.setFont(font)
         self.buttonBackReplay.setText("Back")
-        self.buttonBackReplay.clicked.connect(lambda: self.switchPage(3))
+        self.buttonBackReplay.clicked.connect(self.switchPageDatabase)
 
-        self.buttonStartReplay = QtWidgets.QPushButton(self.pageReplay)
-        self.buttonStartReplay.setGeometry(QtCore.QRect(695, 850, 100, 41))
-        self.buttonStartReplay.setText("Start")
-
-        self.buttonClearReplay = QtWidgets.QPushButton(self.pageReplay)
-        self.buttonClearReplay.setGeometry(QtCore.QRect(805, 850, 100, 41))
-        self.buttonClearReplay.setText("Clear Timer")
+        self.frameReplayControl = QtWidgets.QFrame(self.pageReplay)
+        self.frameReplayControl.setGeometry(QtCore.QRect(490, 790, 600, 100))
+        self.frameReplayControl.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frameReplayControl.setFrameShadow(QtWidgets.QFrame.Plain)
 
         ####################################################################################################################
+
+
 
 
         #####################################################################################################################
 
         #timer widget
 
-        timerReplay = timerWidget.TimerWidget(self.pageReplay, buttonStart=self.buttonStartReplay, stackedWidget=self.stackedWidget)
-        self.buttonStartReplay.clicked.connect(timerReplay.timerClick)
-        self.buttonClearReplay.clicked.connect(timerReplay.timerClear)
-
         #######################################################################################################################
 
         #directional widgets
 
-        self.directionSpeedReplay = directionWidget.DirectionWidget(self.frameSpeedReplay, labelVal=self.labelSpeedValReplay)
-        self.directionAccelReplay = directionWidget.DirectionWidget(self.frameAccelReplay, labelVal=self.labelAccelValReplay)
+        self.directionSpeedReplay = directionWidget.DirectionWidget(self.frameSpeedReplay, labelVal=self.labelSpeedValReplay, type="speed")
+        self.directionAccelReplay = directionWidget.DirectionWidget(self.frameAccelReplay, labelVal=self.labelAccelValReplay,type="accel")
         self.xTiltReplay = tiltWidget.TiltWidget(self.frameXTiltReplay, labelTilt=self.labelXTiltValReplay)
         self.yTiltReplay = tiltWidget.TiltWidget(self.frameYTiltReplay, labelTilt=self.labelYTiltValReplay)
+
 
         ####################################################################################################################
 
@@ -2571,19 +2543,61 @@ class Ui_MainWindow(object):
 
         return holesArray, wallsArray, pathArray
 
-    def loadReplay(self):
+    def imageProcessingMarble(self):
         try:
+            self.marbleManual.updateCood(40, 40)
+            self.marbleManual.updateSpeedDirection(50, 50)
+            self.marbleManual.updateAccelDirection(70, 70)
+
+            self.marbleAuto.updateCood(40,40)
+            self.marbleAuto.updateSpeedDirection(50,50)
+            self.marbleAuto.updateAccelDirection(70, 70)
+
+
+        except:
+            pass
+
+    def loadReplay(self):
             self.mazeID = self.treeWidgetDatabase.currentItem().text(5)
             cursor = solves.find_one({"_id":ObjectId(self.mazeID)})
             difficulty = cursor.get("type")
             walls = cursor.get("wall")
             path = cursor.get("path")
             holes = cursor.get("holes")
-            renderBoard2D.RenderBoard2D(self.frameVideoReplay, difficulty=difficulty, walls=walls, path=path, holes=holes)
+            frameData = cursor.get("frameData")
+            self.boardReplay = renderBoard2D.RenderBoard2D(self.frameVideoReplay, difficulty=difficulty, walls=walls, path=path, holes=holes)
+            self.marbleReplay = renderMarble2D.RenderMarble(self.frameVideoReplay, mazeWidth=self.boardReplay.width, mazeHeight=self.boardReplay.height,
+                                             mazeX=self.boardReplay.minX, mazeY=self.boardReplay.minY, labelCoodVal=self.labelBallCoodValReplay, speed=self.directionSpeedReplay,
+                                             accel=self.directionAccelReplay)
+            self.directionSpeedReplay.marble = self.marbleReplay
+            self.directionAccelReplay.marble = self.marbleReplay
+
+            self.playback = replayWidget.ReplayWidget(self.frameReplayControl, frameData=frameData, marble=self.marbleReplay, speed=self.directionSpeedReplay,
+                                                      accel=self.directionAccelReplay, tiltX=self.xTiltReplay, tiltY=self.yTiltReplay)
 
             self.switchPage(7)
-        except:
-            print("nothing selected!")
+
+    def loadAuto(self):
+        self.boardAuto = renderBoard2D.RenderBoard2D(self.frameVideoAuto,holes=self.imageProcessing()[0],walls=self.imageProcessing()[1],path=self.imageProcessing()[2], difficulty="Easy")
+        self.marbleAuto = renderMarble2D.RenderMarble(self.frameVideoAuto, mazeWidth=self.boardAuto.width, mazeHeight=self.boardAuto.height, mazeX=self.boardAuto.minX,
+                                                            mazeY=self.boardAuto.minY, labelCoodVal=self.labelBallCoodValAuto, speed=self.directionSpeedAuto, accel=self.directionAccelAuto)
+        self.directionSpeedAuto.marble = self.marbleAuto
+        self.directionAccelAuto.marble = self.marbleAuto
+        self.imageProcessingMarble()
+        self.switchPage(1)
+
+    def loadManual(self):
+        self.boardManual = renderBoard2D.RenderBoard2D(self.frameVideoManual, holes=self.imageProcessing()[0],
+                                                     walls=self.imageProcessing()[1], path=self.imageProcessing()[2],
+                                                     difficulty="Hard")
+        self.marbleManual = renderMarble2D.RenderMarble(self.frameVideoManual, mazeWidth=self.boardManual.width,
+                                                      mazeHeight=self.boardManual.height, mazeX=self.boardManual.minX,
+                                                      mazeY=self.boardManual.minY, labelCoodVal=self.labelBallCoodValManual,
+                                                      speed=self.directionSpeedManual, accel=self.directionAccelManual)
+        self.directionSpeedManual.marble = self.marbleManual
+        self.directionAccelManual.marble = self.marbleManual
+        self.imageProcessingMarble()
+        self.switchPage(2)
 
     def arrangeDatabase(self):
         self.treeWidgetDatabase.clear()
@@ -2632,6 +2646,34 @@ class Ui_MainWindow(object):
             self.treeWidgetDatabase.topLevelItem(i).setText(3, autoString)
             self.treeWidgetDatabase.topLevelItem(i).setText(4,solve.get("type"))
             self.treeWidgetDatabase.topLevelItem(i).setText(5,str(solve.get("_id")))
+
+    def deleteBoardMarble(self, currentPage):
+        if currentPage == "replay":
+            self.switchPage(3)
+            self.playback.deleteLater()
+            self.marbleReplay.deleteLater()
+            self.boardReplay.deleteLater()
+        if currentPage == "auto":
+            self.switchPage(0)
+            self.marbleAuto.deleteLater()
+            self.boardAuto.deleteLater()
+        if currentPage == "manual":
+            self.switchPage(0)
+            self.marbleManual.deleteLater()
+            self.boardManual.deleteLater()
+
+    def switchPageDatabase(self):
+        self.switchPage(3)
+        self.playback.deleteLater()
+
+    def refreshBoard(self):
+        if self.stackedWidget.currentIndex() == 1:
+            self.boardAuto.deleteLater()
+            self.marbleAuto.deleteLater()
+            # add new board
+        if self.stackedWidget.currentIndex() == 2:
+            self.boardManual.deleteLater()
+            self.marbleManual.deleteLater()
 
 if __name__ == "__main__":
     import sys

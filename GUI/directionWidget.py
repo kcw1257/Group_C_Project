@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5 import QtWidgets, QtGui
 
 class DirectionWidget(QWidget):
-    def __init__(self, parent=None, minimumWidth=200, minimumHeight = 130, directionVal = 0, val=0, labelVal=None, type=None):
+    def __init__(self, parent=None, minimumWidth=200, minimumHeight = 130, directionVal = 0, val=0, labelVal=None, type=None, marble=None):
         super(DirectionWidget, self).__init__(parent)
         self.setMinimumSize(minimumWidth, minimumHeight)
         self.maxDistance = 64
@@ -12,6 +12,7 @@ class DirectionWidget(QWidget):
         self.val = val
         self.labelVal = labelVal
         self.type = type
+        self.marble = marble
 
     def paintEvent(self, event):
         self.directionVal = 90 - self.directionVal
@@ -25,8 +26,10 @@ class DirectionWidget(QWidget):
 
         if self.type == "speed":
             painter.setPen(QPen(Qt.darkGreen, 2))
+            self.marble.updateSpeedDirection(self.val, self.directionVal)
         if self.type == "accel":
             painter.setPen(QPen(Qt.darkRed, 2))
+            self.marble.updateAccelDirection(self.val, self.directionVal)
 
         directionLine = QLineF()
         directionLine.setP1(QPointF(100,65))
@@ -36,4 +39,13 @@ class DirectionWidget(QWidget):
         painter.end()
 
         self.labelVal.setText(str(self.val))
+
+    def setVal(self, val):
+        self.val = val
+        self.update()
+
+    def setDirection(self, direction):
+        self.directionVal = direction
+        self.update()
+
 
