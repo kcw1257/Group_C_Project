@@ -74,3 +74,4 @@ class RenderMarble(QWidget):
         self.accelVal = accelVal
         self.accelDirection = accelDirection
         self.update()
+

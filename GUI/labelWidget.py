@@ -1,7 +1,4 @@
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5 import QtCore, QtGui, QtWidgets, QtOpenGL
-from PyQt5.QtWidgets import QWidget
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class LabelWidget(QtWidgets.QLabel):
     def __init__(self, parent=None, controlVal = 0, joystick=None,slider=None,cood=[0,0]):
@@ -25,6 +22,7 @@ class LabelWidget(QtWidgets.QLabel):
         self.updateVal(controlVal)
 
     def updateVal(self, controlVal):
+        self.controlVal = controlVal
         self.setText(str(controlVal))
 
     def updateFromSlider(self, controlVal,axis):

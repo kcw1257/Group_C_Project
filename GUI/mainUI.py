@@ -1,10 +1,5 @@
-from PyQt5 import QtCore, QtGui, QtWidgets, QtOpenGL
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QPainter, QBrush, QPen
-from PyQt5.QtCore import Qt
-import time
+from PyQt5 import QtCore, QtGui, QtWidgets
 import pymongo
-import pprint
 from numpy import array, int32
 import joystickWidget, renderBoard2D, renderMarble2D, directionWidget, tiltWidget, timerWidget, labelWidget, replayWidget
 from bson.objectid import ObjectId
@@ -93,8 +88,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
 
         self.buttonBackAuto = QtWidgets.QPushButton(self.pageAuto)
-        self.buttonBackAuto.setGeometry(QtCore.QRect(20, 830, 81, 31))
-        font.setPointSize(12)
+        self.buttonBackAuto.setGeometry(QtCore.QRect(20, 830, 81, 35))
         self.buttonBackAuto.setFont(font)
         self.buttonBackAuto.setText("Back")
         self.buttonBackAuto.clicked.connect(lambda: self.deleteBoardMarble("auto"))
@@ -280,12 +274,6 @@ class Ui_MainWindow(object):
         timerAuto = timerWidget.TimerWidget(self.pageAuto, buttonStart=self.buttonStartAuto, stackedWidget=self.stackedWidget)
         self.buttonClearAuto.clicked.connect(timerAuto.timerClear)
         self.buttonStartAuto.clicked.connect(timerAuto.timerClick)
-        
-        #####################################################################################################################
-        
-        #render board and marble
-
-
 
         ######################################################################################################################
 
@@ -440,8 +428,8 @@ class Ui_MainWindow(object):
         self.labelBallCoodValManual.setText("(0,0)")
 
         self.buttonBackManual = QtWidgets.QPushButton(self.pageManual)
-        self.buttonBackManual.setGeometry(QtCore.QRect(30, 820, 81, 31))
-        font.setPointSize(12)
+        self.buttonBackManual.setGeometry(QtCore.QRect(20, 830, 81, 35))
+        font.setPointSize(8)
         self.buttonBackManual.setFont(font)
         self.buttonBackManual.setText("Back")
         self.buttonBackManual.clicked.connect(lambda: self.deleteBoardMarble("manual"))
@@ -546,31 +534,25 @@ class Ui_MainWindow(object):
         self.xTiltManual = tiltWidget.TiltWidget(self.frameXTiltManual, labelTilt=self.labelXTiltValManual)
         self.yTiltManual = tiltWidget.TiltWidget(self.frameYTiltManual, labelTilt=self.labelYTiltValManual)
 
-
-        #########################################################################################################################
-
-        #board and marble render
-
-
         ##########################################################################################################################
 
     def pageDatabaseWidgets(self):
         font = QtGui.QFont()
 
         self.labelTitleDatabase = QtWidgets.QLabel(self.pageDatabase)
-        self.labelTitleDatabase.setGeometry(QtCore.QRect(780, 20, 181, 41))
+        self.labelTitleDatabase.setGeometry(QtCore.QRect(710, 20, 181, 41))
         self.labelTitleDatabase.setText("Database")
         font.setPointSize(32)
         self.labelTitleDatabase.setFont(font)
         self.labelTitleDatabase.setAlignment(QtCore.Qt.AlignCenter)
 
         self.buttonBackDatabase = QtWidgets.QPushButton(self.pageDatabase)
-        self.buttonBackDatabase.setGeometry(QtCore.QRect(50, 830, 75, 23))
+        self.buttonBackDatabase.setGeometry(QtCore.QRect(20, 830, 81, 35))
         self.buttonBackDatabase.setText("Back")
         self.buttonBackDatabase.clicked.connect(lambda: self.switchPage(0))
 
         self.frameDatabase = QtWidgets.QFrame(self.pageDatabase)
-        self.frameDatabase.setGeometry(QtCore.QRect(400, 90, 850, 720))
+        self.frameDatabase.setGeometry(QtCore.QRect(350, 90, 900, 720))
         self.frameDatabase.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frameDatabase.setFrameShadow(QtWidgets.QFrame.Plain)
 
@@ -584,49 +566,96 @@ class Ui_MainWindow(object):
         self.buttonHelpDatabase.setText("Help")
 
         self.treeWidgetDatabase = QtWidgets.QTreeWidget(self.frameDatabase)
-        self.treeWidgetDatabase.setGeometry(QtCore.QRect(0, 0, 850, 720))
+        self.treeWidgetDatabase.setGeometry(QtCore.QRect(0, 0, 900, 720))
         font.setPointSize(16)
         self.treeWidgetDatabase.setFont(font)
-        self.treeWidgetDatabase.setHeaderLabels(["Date", "Time Completed", "Solve Success?", "Auto or Manual", "Board Type"])
+        self.treeWidgetDatabase.setHeaderLabels(["Date (Time)", "Time Completed", "Solve Success?", "Auto or Manual", "Board Type"])
 
-        self.comboBoxAutoManual = QtWidgets.QComboBox(self.pageDatabase)
-        self.comboBoxAutoManual.setGeometry(1300,200,100,20)
+        self.frameFilter = QtWidgets.QFrame(self.pageDatabase)
+        self.frameFilter.setGeometry(QtCore.QRect(1280, 160, 181, 241))
+        self.frameFilter.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frameFilter.setFrameShadow(QtWidgets.QFrame.Plain)
+
+        font.setPointSize(10)
+        self.comboBoxAutoManual = QtWidgets.QComboBox(self.frameFilter)
+        self.comboBoxAutoManual.setGeometry(0,150,180, 30)
         self.comboBoxAutoManual.addItem("Show All")
         self.comboBoxAutoManual.addItem("Auto")
         self.comboBoxAutoManual.addItem("Manual")
+        self.comboBoxAutoManual.setFont(font)
         self.comboBoxAutoManual.activated[str].connect(self.arrangeDatabase)
 
-        self.comboBoxType = QtWidgets.QComboBox(self.pageDatabase)
-        self.comboBoxType.setGeometry(1300, 250, 100, 20)
+        self.comboBoxType = QtWidgets.QComboBox(self.frameFilter)
+        self.comboBoxType.setGeometry(0, 210, 180, 30)
         self.comboBoxType.addItem("Show All")
         self.comboBoxType.addItem("Easy")
         self.comboBoxType.addItem("Medium")
         self.comboBoxType.addItem("Hard")
         self.comboBoxType.addItem("Custom")
+        self.comboBoxType.setFont(font)
         self.comboBoxType.activated[str].connect(self.arrangeDatabase)
 
-        self.comboBoxResult = QtWidgets.QComboBox(self.pageDatabase)
-        self.comboBoxResult.setGeometry(1300, 300, 100, 20)
+        self.comboBoxResult = QtWidgets.QComboBox(self.frameFilter)
+        self.comboBoxResult.setGeometry(0, 90, 180, 30)
         self.comboBoxResult.addItem("Show All")
         self.comboBoxResult.addItem("Success")
         self.comboBoxResult.addItem("Failure")
+        self.comboBoxResult.setFont(font)
         self.comboBoxResult.activated[str].connect(self.arrangeDatabase)
 
-        self.comboBoxTime = QtWidgets.QComboBox(self.pageDatabase)
-        self.comboBoxTime.setGeometry(1300, 450, 100, 20)
+        self.comboBoxTime = QtWidgets.QComboBox(self.frameFilter)
+        self.comboBoxTime.setGeometry(0, 30, 180, 30)
         self.comboBoxTime.addItem("Most Recent First")
         self.comboBoxTime.addItem("Oldest First")
         self.comboBoxTime.addItem("Fastest Time First")
         self.comboBoxTime.addItem("Slowest Time First")
+        self.comboBoxTime.setFont(font)
         self.comboBoxTime.activated[str].connect(self.arrangeDatabase)
+
+
+
+        self.labelSort = QtWidgets.QLabel(self.frameFilter)
+        self.labelSort.setGeometry(QtCore.QRect(0, 0, 181, 31))
+        self.labelSort.setText("Sort By:")
+        self.labelSort.setFrameShape(QtWidgets.QFrame.Box)
+        font.setPointSize(14)
+        self.labelSort.setFont(font)
+        self.labelSort.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.labelFilterResult = QtWidgets.QLabel(self.frameFilter)
+        self.labelFilterResult.setGeometry(QtCore.QRect(0, 60, 181, 31))
+        self.labelFilterResult.setFrameShape(QtWidgets.QFrame.Box)
+        self.labelFilterResult.setText("Filter Result:")
+        font.setPointSize(14)
+        self.labelFilterResult.setFont(font)
+        self.labelFilterResult.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.labelFilterAuto = QtWidgets.QLabel(self.frameFilter)
+        self.labelFilterAuto.setGeometry(QtCore.QRect(0, 120, 181, 31))
+        self.labelFilterAuto.setFrameShape(QtWidgets.QFrame.Box)
+        self.labelFilterAuto.setText("Filter Auto:")
+        font.setPointSize(14)
+        self.labelFilterAuto.setFont(font)
+        self.labelFilterAuto.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.labelFilterType = QtWidgets.QLabel(self.frameFilter)
+        self.labelFilterType.setGeometry(QtCore.QRect(0, 180, 181, 31))
+        self.labelFilterType.setFrameShape(QtWidgets.QFrame.Box)
+        self.labelFilterType.setText("Filter Type:")
+        font.setPointSize(14)
+        self.labelFilterType.setFont(font)
+        self.labelFilterType.setAlignment(QtCore.Qt.AlignCenter)
+
+
 
         ###########################################################
 
-        # print(list(solves.find().sort("time",pymongo.DESCENDING)))
+        #database
+
         self.arrangeDatabase()
-        #self.treeWidgetDatabase.selectedItems()
 
         self.treeWidgetDatabase.resizeColumnToContents(0)
+        self.treeWidgetDatabase.setColumnWidth(0,self.treeWidgetDatabase.columnWidth(0)+50)
         self.treeWidgetDatabase.resizeColumnToContents(1)
         self.treeWidgetDatabase.resizeColumnToContents(2)
         self.treeWidgetDatabase.resizeColumnToContents(3)
@@ -638,12 +667,12 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
 
         self.buttonBackStats = QtWidgets.QPushButton(self.pageStats)
-        self.buttonBackStats.setGeometry(QtCore.QRect(30, 840, 75, 23))
+        self.buttonBackStats.setGeometry(QtCore.QRect(20, 830, 81, 35))
         self.buttonBackStats.setText("Back")
         self.buttonBackStats.clicked.connect(lambda: self.switchPage(0))
 
         self.labelTitleStats = QtWidgets.QLabel(self.pageStats)
-        self.labelTitleStats.setGeometry(QtCore.QRect(870, 10, 161, 41))
+        self.labelTitleStats.setGeometry(QtCore.QRect(720, 10, 161, 41))
         font.setPointSize(32)
         self.labelTitleStats.setFont(font)
         self.labelTitleStats.setAlignment(QtCore.Qt.AlignCenter)
@@ -658,7 +687,6 @@ class Ui_MainWindow(object):
         self.treeWidgetStats.setGeometry(QtCore.QRect(0, 0, 600, 741))
         font.setPointSize(16)
         self.treeWidgetStats.setFont(font)
-
 
         for i in range(15):
             item_0 = QtWidgets.QTreeWidgetItem(self.treeWidgetStats)
@@ -700,25 +728,30 @@ class Ui_MainWindow(object):
         highestAutoFrames = 0
 
         for solve in solves.find({"success":True,"auto":True}):
-            totalAutoFrames += len(solve.get("frameData"))
-            if lowestAutoFrames > len(solve.get("frameData")):
-                lowestAutoFrames = len(solve.get("frameData"))
-            if highestAutoFrames < len(solve.get("frameData")):
-                highestAutoFrames = len(solve.get("frameData"))
+            totalAutoFrames += solve.get("totalFrames")
+            if lowestAutoFrames > solve.get("totalFrames"):
+                lowestAutoFrames = solve.get("totalFrames")
+            if highestAutoFrames < solve.get("totalFrames"):
+                highestAutoFrames = solve.get("totalFrames")
 
         try:
             averageAutoSolve = totalAutoFrames / solves.count_documents({"success": True, "auto": True})
+            averageAutoSolve = self.framesToTime(averageAutoSolve)
         except:
             averageAutoSolve = "N/A"
-        self.treeWidgetStats.topLevelItem(6).setText(1, str(averageAutoSolve))
+        self.treeWidgetStats.topLevelItem(6).setText(1, averageAutoSolve)
 
         if lowestAutoFrames == 9999999999:
             lowestAutoFrames = "N/A"
-        self.treeWidgetStats.topLevelItem(7).setText(1, str(lowestAutoFrames))
+        else:
+            lowestAutoFrames = self.framesToTime(lowestAutoFrames)
+        self.treeWidgetStats.topLevelItem(7).setText(1, lowestAutoFrames)
 
         if highestAutoFrames == 0:
             highestAutoFrames = "N/A"
-        self.treeWidgetStats.topLevelItem(8).setText(1, str(highestAutoFrames))
+        else:
+            highestAutoFrames = self.framesToTime(highestAutoFrames)
+        self.treeWidgetStats.topLevelItem(8).setText(1, highestAutoFrames)
         
         self.treeWidgetStats.topLevelItem(9).setText(1, str(solves.count_documents({"auto":False})))
         self.treeWidgetStats.topLevelItem(10).setText(1, str(solves.count_documents({"auto":False,"success":True})))
@@ -728,26 +761,31 @@ class Ui_MainWindow(object):
         lowestManualFrames = 9999999999
         highestManualFrames = 0
 
-        for solve in solves.find({"success": True, "auto": False}):
-            totalAutoFrames += len(solve.get("frameData"))
-            if lowestManualFrames > len(solve.get("frameData")):
-                lowestManualFrames = len(solve.get("frameData"))
-            if highestManualFrames < len(solve.get("frameData")):
-                highestManualFrames = len(solve.get("frameData"))
+        for i,solve in enumerate(solves.find({"success": True, "auto": False})):
+            totalManualFrames += solve.get("totalFrames")
+            if lowestManualFrames > solve.get("totalFrames"):
+                lowestManualFrames = solve.get("totalFrames")
+            if highestManualFrames < solve.get("totalFrames"):
+                highestManualFrames = solve.get("totalFrames")
 
         try:
             averageManualSolve = totalManualFrames / solves.count_documents({"success": True, "auto": False})
+            averageManualSolve = self.framesToTime(averageManualSolve)
         except:
             averageManualSolve = "N/A"
-        self.treeWidgetStats.topLevelItem(12).setText(1, str(averageManualSolve))
+        self.treeWidgetStats.topLevelItem(12).setText(1, averageManualSolve)
 
         if lowestManualFrames == 9999999999:
             lowestManualFrames = "N/A"
-        self.treeWidgetStats.topLevelItem(13).setText(1, str(lowestManualFrames))
+        else:
+            lowestManualFrames = self.framesToTime(lowestManualFrames)
+        self.treeWidgetStats.topLevelItem(13).setText(1, lowestManualFrames)
 
         if highestManualFrames == 0:
             highestManualFrames = "N/A"
-        self.treeWidgetStats.topLevelItem(14).setText(1, str(highestManualFrames))
+        else:
+            highestManualFrames = self.framesToTime(highestManualFrames)
+        self.treeWidgetStats.topLevelItem(14).setText(1, highestManualFrames)
 
         self.treeWidgetStats.resizeColumnToContents(0)
         self.treeWidgetStats.resizeColumnToContents(1)
@@ -971,15 +1009,6 @@ class Ui_MainWindow(object):
         self.frameReplayControl.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frameReplayControl.setFrameShadow(QtWidgets.QFrame.Plain)
 
-        ####################################################################################################################
-
-
-
-
-        #####################################################################################################################
-
-        #timer widget
-
         #######################################################################################################################
 
         #directional widgets
@@ -997,7 +1026,7 @@ class Ui_MainWindow(object):
 
     def prettyTime(self, time):
         x = time.split(":")
-        return f"{x[2]}/{x[1]}/{x[0]} {x[3]}:{x[4]}:{x[5]}"
+        return f"{x[2]}/{x[1]}/{x[0]} ({x[3]}:{x[4]}:{x[5]})"
 
     #holes walls path
     def imageProcessing(self):
@@ -2589,7 +2618,7 @@ class Ui_MainWindow(object):
     def loadManual(self):
         self.boardManual = renderBoard2D.RenderBoard2D(self.frameVideoManual, holes=self.imageProcessing()[0],
                                                      walls=self.imageProcessing()[1], path=self.imageProcessing()[2],
-                                                     difficulty="Hard")
+                                                     difficulty="Custom")
         self.marbleManual = renderMarble2D.RenderMarble(self.frameVideoManual, mazeWidth=self.boardManual.width,
                                                       mazeHeight=self.boardManual.height, mazeX=self.boardManual.minX,
                                                       mazeY=self.boardManual.minY, labelCoodVal=self.labelBallCoodValManual,
@@ -2640,7 +2669,7 @@ class Ui_MainWindow(object):
         for i,solve in enumerate(solves.find({'success':{"$in": result},"type": {"$in": _type},"auto": {"$in": auto}}).sort(sort[0],sort[1])):
             itemList = QtWidgets.QTreeWidgetItem(self.treeWidgetDatabase)
             self.treeWidgetDatabase.topLevelItem(i).setText(0, self.prettyTime(solve.get("time")))
-            self.treeWidgetDatabase.topLevelItem(i).setText(1, str(solve.get("totalFrames")))
+            self.treeWidgetDatabase.topLevelItem(i).setText(1, self.framesToTime(solve.get("totalFrames")))
             self.treeWidgetDatabase.topLevelItem(i).setText(2, str(solve.get("success")))
             autoString = "Auto" if solve.get("auto") else "Manual"
             self.treeWidgetDatabase.topLevelItem(i).setText(3, autoString)
@@ -2674,6 +2703,25 @@ class Ui_MainWindow(object):
         if self.stackedWidget.currentIndex() == 2:
             self.boardManual.deleteLater()
             self.marbleManual.deleteLater()
+
+    def framesToTime(self, frames):
+        msecond= frames * 31.25
+        second = msecond / 1000
+        minute = second / 60
+
+        msecondText = str(int(msecond % 1000))
+        secondText = str(int(second % 60))
+        minuteText = str(int(minute))
+        if len(msecondText) == 3:
+            msecondText = msecondText[:-1]
+        if len(msecondText) == 1:
+            msecondText = "0" + msecondText
+        if len(secondText) == 1:
+            secondText = "0" + secondText
+        if len(minuteText) == 1:
+            minuteText = "0" + minuteText
+
+        return f"{minuteText}:{secondText}:{msecondText}"
 
 if __name__ == "__main__":
     import sys

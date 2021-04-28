@@ -1,7 +1,6 @@
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QWidget
-from PyQt5 import QtWidgets, QtGui
 
 class DirectionWidget(QWidget):
     def __init__(self, parent=None, minimumWidth=200, minimumHeight = 130, directionVal = 0, val=0, labelVal=None, type=None, marble=None):

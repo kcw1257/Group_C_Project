@@ -1,5 +1,4 @@
 from pymongo import MongoClient
-import pprint
 from datetime import datetime
 
 client = MongoClient(host="localhost", port=27017)
@@ -801,8 +800,8 @@ solve = {
                      [194, 114], [224, 115], [254, 116], [264, 92], [271, 65], [301, 65], [306, 94], [319, 115],
                      [346, 110], [346, 80], [365, 65], [395, 65], [405, 88], [413, 115], [442, 118], [443, 148],
                      [422, 160], [413, 186], [425, 209], [442, 225], [442, 255], [442, 285], [442, 315], [443, 334]],
-    "success":False,
-    "auto": False,
+    "success":True,
+    "auto": True,
     "frameData":[],
     "time":datetime.now().strftime("%Y:%m:%d:%H:%M:%S"),
     "type": "Medium",

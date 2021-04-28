@@ -1,7 +1,4 @@
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import QWidget
-from PyQt5 import QtCore, QtGui, QtWidgets, QtOpenGL
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class TimerWidget(QtWidgets.QFrame):
     def __init__(self, parent=None, buttonStart=None, buttonClear=None, stackedWidget=None):
