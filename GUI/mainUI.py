@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pymongo
 from numpy import array, int32
-import joystickWidget, renderBoard2D, renderMarble2D, directionWidget, tiltWidget, timerWidget, labelWidget, replayWidget
+import joystickWidget, renderBoard2D, renderMarble2D, directionWidget, tiltWidget, timerWidget, labelWidget, replayWidget, statusWidget
 from bson.objectid import ObjectId
 
 client = pymongo.MongoClient(host="localhost", port=27017)
@@ -94,21 +94,21 @@ class Ui_MainWindow(object):
         self.buttonBackAuto.clicked.connect(lambda: self.deleteBoardMarble("auto"))
 
         self.labelTitleAuto = QtWidgets.QLabel(self.pageAuto)
-        self.labelTitleAuto.setGeometry(QtCore.QRect(140, 0, 1320, 60))
+        self.labelTitleAuto.setGeometry(QtCore.QRect(140, 0, 1320, 40))
         font.setPointSize(32)
         self.labelTitleAuto.setFont(font)
         self.labelTitleAuto.setAlignment(QtCore.Qt.AlignCenter)
         self.labelTitleAuto.setText("Automated Solve")
 
         self.frameVideoAuto = QtWidgets.QFrame(self.pageAuto)
-        self.frameVideoAuto.setGeometry(QtCore.QRect(60, 60, 1280, 720))
+        self.frameVideoAuto.setGeometry(QtCore.QRect(60, 40, 1280, 720))
         self.frameVideoAuto.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameVideoAuto.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameVideoAuto.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.frameInfoAuto = QtWidgets.QFrame(self.pageAuto)
-        self.frameInfoAuto.setGeometry(QtCore.QRect(1340, 60, 200, 720))
+        self.frameInfoAuto.setGeometry(QtCore.QRect(1340, 40, 200, 720))
         self.frameInfoAuto.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameInfoAuto.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameInfoAuto.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.labelSpeedAuto = QtWidgets.QLabel(self.frameInfoAuto)
         self.labelSpeedAuto.setGeometry(QtCore.QRect(0, 0, 200, 20))
@@ -201,22 +201,22 @@ class Ui_MainWindow(object):
         self.frameSpeedAuto = QtWidgets.QFrame(self.frameInfoAuto)
         self.frameSpeedAuto.setGeometry(QtCore.QRect(0, 40, 200, 130))
         self.frameSpeedAuto.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameSpeedAuto.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameSpeedAuto.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.frameAccelAuto = QtWidgets.QFrame(self.frameInfoAuto)
         self.frameAccelAuto.setGeometry(QtCore.QRect(0, 210, 200, 130))
         self.frameAccelAuto.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameAccelAuto.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameAccelAuto.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.frameXTiltAuto = QtWidgets.QFrame(self.frameInfoAuto)
         self.frameXTiltAuto.setGeometry(QtCore.QRect(0, 380, 200, 130))
         self.frameXTiltAuto.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameXTiltAuto.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameXTiltAuto.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.frameYTiltAuto = QtWidgets.QFrame(self.frameInfoAuto)
         self.frameYTiltAuto.setGeometry(QtCore.QRect(0, 550, 200, 130))
         self.frameYTiltAuto.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameYTiltAuto.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameYTiltAuto.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.labelBallCoodAuto = QtWidgets.QLabel(self.frameInfoAuto)
         self.labelBallCoodAuto.setGeometry(QtCore.QRect(0, 680, 200, 20))
@@ -254,9 +254,16 @@ class Ui_MainWindow(object):
         self.buttonHelpAuto.clicked.connect(lambda: self.switchPage(5))
 
         self.buttonRefreshAuto = QtWidgets.QPushButton(self.pageAuto)
-        self.buttonRefreshAuto.setGeometry(QtCore.QRect(950, 815, 100, 40))
+        self.buttonRefreshAuto.setGeometry(QtCore.QRect(570, 815, 100, 40))
         self.buttonRefreshAuto.setText("Refresh")
         self.buttonRefreshAuto.clicked.connect(self.refreshBoard)
+
+        self.buttonSwitchAuto = QtWidgets.QPushButton(self.pageAuto)
+        self.buttonSwitchAuto.setGeometry(QtCore.QRect(1261, 18, 80, 23))
+        self.buttonSwitchAuto.setText("Switch Camera")
+
+        self.statusAuto = statusWidget.StatusWidget(self.pageAuto)
+        self.statusAuto.move(285,790)
         
         ###################################################################################################################
         
@@ -283,7 +290,7 @@ class Ui_MainWindow(object):
         self.frameVideoManual = QtWidgets.QFrame(self.pageManual)
         self.frameVideoManual.setGeometry(QtCore.QRect(60, 40, 1280, 720))
         self.frameVideoManual.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameVideoManual.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameVideoManual.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.labelTitleManual = QtWidgets.QLabel(self.pageManual)
         self.labelTitleManual.setGeometry(QtCore.QRect(0, 0, 1601, 41))
@@ -295,7 +302,7 @@ class Ui_MainWindow(object):
         self.frameInfoManual = QtWidgets.QFrame(self.pageManual)
         self.frameInfoManual.setGeometry(QtCore.QRect(1340, 40, 200, 720))
         self.frameInfoManual.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameInfoManual.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameInfoManual.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.labelSpeedManual = QtWidgets.QLabel(self.frameInfoManual)
         self.labelSpeedManual.setGeometry(QtCore.QRect(0, 0, 200, 20))
@@ -388,22 +395,22 @@ class Ui_MainWindow(object):
         self.frameSpeedManual = QtWidgets.QFrame(self.frameInfoManual)
         self.frameSpeedManual.setGeometry(QtCore.QRect(0, 40, 200, 130))
         self.frameSpeedManual.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameSpeedManual.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameSpeedManual.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.frameAccelManual = QtWidgets.QFrame(self.frameInfoManual)
         self.frameAccelManual.setGeometry(QtCore.QRect(0, 210, 200, 130))
         self.frameAccelManual.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameAccelManual.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameAccelManual.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.frameXTiltManual = QtWidgets.QFrame(self.frameInfoManual)
         self.frameXTiltManual.setGeometry(QtCore.QRect(0, 380, 200, 130))
         self.frameXTiltManual.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameXTiltManual.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameXTiltManual.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.frameYTiltManual = QtWidgets.QFrame(self.frameInfoManual)
         self.frameYTiltManual.setGeometry(QtCore.QRect(0, 550, 200, 130))
         self.frameYTiltManual.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameYTiltManual.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameYTiltManual.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.labelBallCoodManual = QtWidgets.QLabel(self.frameInfoManual)
         self.labelBallCoodManual.setGeometry(QtCore.QRect(0, 680, 200, 20))
@@ -475,10 +482,17 @@ class Ui_MainWindow(object):
         self.buttonClearManual.setGeometry(QtCore.QRect(805, 850, 100, 41))
         self.buttonClearManual.setText("Clear Timer")
 
-        self.buttonRefreshAuto = QtWidgets.QPushButton(self.pageManual)
-        self.buttonRefreshAuto.setGeometry(QtCore.QRect(550, 815, 100, 40))
-        self.buttonRefreshAuto.setText("Refresh")
-        self.buttonRefreshAuto.clicked.connect(self.refreshBoard)
+        self.buttonRefreshManual = QtWidgets.QPushButton(self.pageManual)
+        self.buttonRefreshManual.setGeometry(QtCore.QRect(570, 815, 100, 40))
+        self.buttonRefreshManual.setText("Refresh")
+        self.buttonRefreshManual.clicked.connect(self.refreshBoard)
+
+        self.statusManual = statusWidget.StatusWidget(self.pageManual)
+        self.statusManual.move(285,780)
+
+        self.buttonSwitchManual = QtWidgets.QPushButton(self.pageManual)
+        self.buttonSwitchManual.setGeometry(QtCore.QRect(1261, 18, 80, 23))
+        self.buttonSwitchManual.setText("Switch Camera")
 
         ########################################################################################################################
         
@@ -618,6 +632,7 @@ class Ui_MainWindow(object):
         self.labelSort.setGeometry(QtCore.QRect(0, 0, 181, 31))
         self.labelSort.setText("Sort By:")
         self.labelSort.setFrameShape(QtWidgets.QFrame.Box)
+        self.labelSort.setStyleSheet("background-color: rgb(255, 255, 255);")
         font.setPointSize(14)
         self.labelSort.setFont(font)
         self.labelSort.setAlignment(QtCore.Qt.AlignCenter)
@@ -626,6 +641,7 @@ class Ui_MainWindow(object):
         self.labelFilterResult.setGeometry(QtCore.QRect(0, 60, 181, 31))
         self.labelFilterResult.setFrameShape(QtWidgets.QFrame.Box)
         self.labelFilterResult.setText("Filter Result:")
+        self.labelFilterResult.setStyleSheet("background-color: rgb(255, 255, 255);")
         font.setPointSize(14)
         self.labelFilterResult.setFont(font)
         self.labelFilterResult.setAlignment(QtCore.Qt.AlignCenter)
@@ -634,6 +650,7 @@ class Ui_MainWindow(object):
         self.labelFilterAuto.setGeometry(QtCore.QRect(0, 120, 181, 31))
         self.labelFilterAuto.setFrameShape(QtWidgets.QFrame.Box)
         self.labelFilterAuto.setText("Filter Auto:")
+        self.labelFilterAuto.setStyleSheet("background-color: rgb(255, 255, 255);")
         font.setPointSize(14)
         self.labelFilterAuto.setFont(font)
         self.labelFilterAuto.setAlignment(QtCore.Qt.AlignCenter)
@@ -642,6 +659,7 @@ class Ui_MainWindow(object):
         self.labelFilterType.setGeometry(QtCore.QRect(0, 180, 181, 31))
         self.labelFilterType.setFrameShape(QtWidgets.QFrame.Box)
         self.labelFilterType.setText("Filter Type:")
+        self.labelFilterType.setStyleSheet("background-color: rgb(255, 255, 255);")
         font.setPointSize(14)
         self.labelFilterType.setFont(font)
         self.labelFilterType.setAlignment(QtCore.Qt.AlignCenter)
@@ -841,12 +859,12 @@ class Ui_MainWindow(object):
         self.frameVideoReplay = QtWidgets.QFrame(self.pageReplay)
         self.frameVideoReplay.setGeometry(QtCore.QRect(60, 60, 1280, 720))
         self.frameVideoReplay.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameVideoReplay.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameVideoReplay.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.frameInfoReplay = QtWidgets.QFrame(self.pageReplay)
         self.frameInfoReplay.setGeometry(QtCore.QRect(1340, 60, 200, 720))
         self.frameInfoReplay.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameInfoReplay.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameInfoReplay.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.labelSpeedReplay = QtWidgets.QLabel(self.frameInfoReplay)
         self.labelSpeedReplay.setGeometry(QtCore.QRect(0, 0, 200, 20))
@@ -949,22 +967,22 @@ class Ui_MainWindow(object):
         self.frameSpeedReplay = QtWidgets.QFrame(self.frameInfoReplay)
         self.frameSpeedReplay.setGeometry(QtCore.QRect(0, 40, 200, 130))
         self.frameSpeedReplay.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameSpeedReplay.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameSpeedReplay.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.frameAccelReplay = QtWidgets.QFrame(self.frameInfoReplay)
         self.frameAccelReplay.setGeometry(QtCore.QRect(0, 210, 200, 130))
         self.frameAccelReplay.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameAccelReplay.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameAccelReplay.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.frameXTiltReplay = QtWidgets.QFrame(self.frameInfoReplay)
         self.frameXTiltReplay.setGeometry(QtCore.QRect(0, 380, 200, 130))
         self.frameXTiltReplay.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameXTiltReplay.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameXTiltReplay.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.frameYTiltReplay = QtWidgets.QFrame(self.frameInfoReplay)
         self.frameYTiltReplay.setGeometry(QtCore.QRect(0, 550, 200, 130))
         self.frameYTiltReplay.setFrameShape(QtWidgets.QFrame.Box)
-        self.frameYTiltReplay.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameYTiltReplay.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.labelBallCoodReplay = QtWidgets.QLabel(self.frameInfoReplay)
         self.labelBallCoodReplay.setGeometry(QtCore.QRect(0, 680, 200, 20))
@@ -999,14 +1017,14 @@ class Ui_MainWindow(object):
 
         self.buttonBackReplay = QtWidgets.QPushButton(self.pageReplay)
         self.buttonBackReplay.setGeometry(QtCore.QRect(20, 830, 81, 31))
-        font.setPointSize(12)
+        font.setPointSize(8)
         self.buttonBackReplay.setFont(font)
         self.buttonBackReplay.setText("Back")
         self.buttonBackReplay.clicked.connect(self.switchPageDatabase)
 
         self.frameReplayControl = QtWidgets.QFrame(self.pageReplay)
         self.frameReplayControl.setGeometry(QtCore.QRect(490, 790, 600, 100))
-        self.frameReplayControl.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frameReplayControl.setFrameShape(QtWidgets.QFrame.Box)
         self.frameReplayControl.setFrameShadow(QtWidgets.QFrame.Plain)
 
         #######################################################################################################################

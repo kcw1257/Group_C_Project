@@ -23,14 +23,14 @@ class ReplayWidget(QWidget):
         self.labelTime.setText("00:00:00")
 
         self.labelFrames = QtWidgets.QLabel(self)
-        self.labelFrames.setGeometry(QtCore.QRect(300, 30, 301, 31))
+        self.labelFrames.setGeometry(QtCore.QRect(300, 30, 299, 31))
         font.setPointSize(14)
         self.labelFrames.setFont(font)
         self.labelFrames.setText(f"(0/{len(frameData)-1})")
 
         self.frameReplayControlBottom = QtWidgets.QFrame(self)
-        self.frameReplayControlBottom.setGeometry(QtCore.QRect(0, 60, 601, 41))
-        self.frameReplayControlBottom.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frameReplayControlBottom.setGeometry(QtCore.QRect(0, 60, 600, 40))
+        self.frameReplayControlBottom.setFrameShape(QtWidgets.QFrame.Box)
         self.frameReplayControlBottom.setFrameShadow(QtWidgets.QFrame.Plain)
 
         self.buttonRewindHeavy = QtWidgets.QPushButton(self.frameReplayControlBottom)
