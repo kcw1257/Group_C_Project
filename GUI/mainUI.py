@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pymongo
 from numpy import array, int32
-import joystickWidget, renderBoard2D, renderMarble2D, directionWidget, tiltWidget, timerWidget, labelWidget, replayWidget, statusWidget
+import joystickWidget, renderBoard2D, renderMarble2D, directionWidget, tiltWidget, timerWidget, labelWidget, replayWidget, statusWidget, motor_sync_control
 from bson.objectid import ObjectId
 
 client = pymongo.MongoClient(host="localhost", port=27017)
@@ -522,13 +522,15 @@ class Ui_MainWindow(object):
         self.buttonResetYTilt.setGeometry(QtCore.QRect(1300, 860, 75, 23))
         self.buttonResetYTilt.clicked.connect(lambda: self.labelYControlVal.resetTilt("y"))
 
-        self.labelXControlVal = labelWidget.LabelWidget(self.frameManual, slider=self.horizontalSlider, cood=[120,30])
-        self.labelYControlVal = labelWidget.LabelWidget(self.frameManual, slider=self.verticalSlider, cood=[120,90])
+        self.labelXControlVal = labelWidget.LabelWidget(self.frameManual, slider=self.horizontalSlider, cood=[120,30], axis="x")
+        self.labelYControlVal = labelWidget.LabelWidget(self.frameManual, slider=self.verticalSlider, cood=[120,90], axis="y")
 
         joystickManual = joystickWidget.Joystick(self.frameJoystick,labelX=self.labelXControlVal, labelY=self.labelYControlVal)
 
         self.labelXControlVal.joystick = joystickManual
         self.labelYControlVal.joystick = joystickManual
+
+
         
         ########################################################################################################################
 
